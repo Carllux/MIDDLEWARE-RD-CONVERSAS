@@ -1,0 +1,24 @@
+require('dotenv').config();
+const logger = require('../utils/logger');
+
+const ORANGE_API_URL = process.env.ORANGE_API_URL || 'https://api-painel.orangeenvios.com.br';
+
+async function buscarRastreioOrange(codigo) {
+  const url = `${ORANGE_API_URL}/api/Rastreio/${codigo}`;
+  logger.info('Chamando Orange API: %s', url);
+
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => null);
+    const err = new Error(`Erro na API Orange: ${res.status}`);
+    err.status = res.status;
+    err.body = text;
+    throw err;
+  }
+
+  const data = await res.json();
+  return data;
+}
+
+module.exports = { buscarRastreioOrange };
