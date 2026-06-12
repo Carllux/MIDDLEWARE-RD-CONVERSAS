@@ -21,4 +21,30 @@ async function buscarRastreioOrange(codigo) {
   return data;
 }
 
-module.exports = { buscarRastreioOrange };
+async function buscarPontosProximos(cep) {
+  const url = `${ORANGE_API_URL}/api/CalculadoraInstitucional/BuscaPontosProximos`;
+  const payload = { CepOrigem: cep };
+
+  logger.info('Chamando Orange API BuscaPontosProximos com CEP: %s', cep);
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => null);
+    const err = new Error(`Erro na API Orange: ${res.status}`);
+    err.status = res.status;
+    err.body = text;
+    throw err;
+  }
+
+  const data = await res.json();
+  return data;
+}
+
+module.exports = { buscarRastreioOrange, buscarPontosProximos };
