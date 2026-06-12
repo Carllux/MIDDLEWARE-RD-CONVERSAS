@@ -44,7 +44,7 @@ async function getRastreio(req, res, next) {
     const dataPostado = result.dataPostado ?? 'data desconhecida';
     const descricao = result.eventoDescricao ?? 'status desconhecido';
 
-    result.mensagem = `Seu pacote ${codigo}, foi postado dia ${dataPostado}\nStatus atual: \n ${descricao}`;
+    result.mensagem = `Seu pacote ${codigo}, foi postado dia ${dataPostado}\nStatus atual:\n ${descricao}`;
 
     res.json(result);
   } catch (err) {
