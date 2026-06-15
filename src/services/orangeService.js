@@ -47,4 +47,30 @@ async function buscarPontosProximos(cep) {
   return data;
 }
 
-module.exports = { buscarRastreioOrange, buscarPontosProximos };
+async function buscarFretesDisponiveis(payload) {
+  const url = `${ORANGE_API_URL}/api/CalculadoraInstitucional/FretesDisponiveis`;
+
+  logger.info('Chamando Orange API FretesDisponiveis: %s', url);
+  logger.debug('Payload FretesDisponiveis: %o', payload);
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => null);
+    const err = new Error(`Erro na API Orange: ${res.status}`);
+    err.status = res.status;
+    err.body = text;
+    throw err;
+  }
+
+  const data = await res.json();
+  return data;
+}
+
+module.exports = { buscarRastreioOrange, buscarPontosProximos, buscarFretesDisponiveis };
