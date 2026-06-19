@@ -123,14 +123,23 @@ const gerarAgendamentoPostagem = async (req, res, next) => {
       });
     }
 
-    // 8. Retorno de Sucesso
+    // === AJUSTE: Extração do Código do Voucher usando navegação segura e Formatação da Mensagem ===
+    const codigoVoucher = postagemData?.dadosVoucher?.Voucher || postagemData?.Voucher || "Não informado";
+    const mensagemWhatsApp = `Seu Voucher *${codigoVoucher}* foi criado com sucesso.\nMais informações foram enviadas para o e-mail *${Email}*`;
+
+    // 8. Retorno de Sucesso Ajustado para o Bot
     logger.info(`[PostagemController] Agendamento criado com sucesso para o remetente: ${Nome}`);
     
     return res.status(200).json({
+      erro: false,
       status: 200,
-      mensagem: "Agendamento de postagem criado com sucesso",
+      mensagem: mensagemWhatsApp,
       enderecoUtilizado: enderecoTraduzido,
-      dadosVoucher: postagemData
+      dadosVoucher: {
+        Agendamento: postagemData?.dadosVoucher?.Agendamento || postagemData?.Agendamento,
+        Voucher: codigoVoucher,
+        Abrangente: postagemData?.dadosVoucher?.Abrangente || postagemData?.Abrangente
+      }
     });
 
   } catch (error) {
